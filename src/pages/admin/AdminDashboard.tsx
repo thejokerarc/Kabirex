@@ -11,7 +11,15 @@ import {
     Activity
 } from "lucide-react";
 
-const StatsCard = ({ title, value, icon, trend, isPositive }: any) => (
+interface StatsCardProps {
+    title: string;
+    value: string | number;
+    icon: React.ReactNode;
+    trend?: number;
+    isPositive?: boolean;
+}
+
+const StatsCard = ({ title, value, icon, trend, isPositive }: StatsCardProps) => (
     <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
         <div className="flex justify-between items-start mb-4">
             <div className="p-3 bg-gray-50 rounded-xl text-[#3D465A]">
