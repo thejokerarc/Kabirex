@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 const images = [
     "/images/products/iphone16-black.png",
@@ -11,6 +11,18 @@ const images = [
 
 const HeroSlider = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Scroll Parallax Logic
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"]
+    });
+
+    const yBackground = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+    const yText = useTransform(scrollYProgress, [0, 1], [0, 150]);
+    const opacityText = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+    const scaleImage = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -20,7 +32,10 @@ const HeroSlider = () => {
     }, []);
 
     return (
-        <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-[2.5rem] mt-4 bg-slate-900 shadow-2xl">
+        <div
+            ref={containerRef}
+            className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-[2.5rem] mt-4 bg-slate-900 shadow-2xl"
+        >
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentIndex}
@@ -29,13 +44,15 @@ const HeroSlider = () => {
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 1.2, ease: "easeInOut" }}
                     className="absolute inset-0 w-full h-full"
+                    style={{ scale: scaleImage }}
                 >
                     {/* Background Image with Gradient Overlay */}
-                    <div
+                    <motion.div
                         className="absolute inset-0 bg-center bg-no-repeat bg-contain md:bg-cover transition-all"
                         style={{
                             backgroundImage: `url(${images[currentIndex]})`,
-                            filter: "brightness(0.6) contrast(1.1)"
+                            filter: "brightness(0.6) contrast(1.1)",
+                            y: yBackground
                         }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-slate-900/40" />
@@ -43,7 +60,10 @@ const HeroSlider = () => {
             </AnimatePresence>
 
             {/* Content Overlay */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-20">
+            <motion.div
+                className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-20"
+                style={{ y: yText, opacity: opacityText }}
+            >
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -67,7 +87,7 @@ const HeroSlider = () => {
                         </button>
                     </motion.div>
                 </motion.div>
-            </div>
+            </motion.div>
 
             {/* Slide Indicators */}
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-30">
