@@ -17,7 +17,15 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const categories = [
+interface Category {
+    name: string;
+    icon: React.ReactNode;
+    path: string;
+    isSpecial?: boolean;
+    hasSub?: boolean;
+}
+
+const categories: Category[] = [
     { name: "Apple Zone", icon: <Apple className="h-4 w-4" />, path: "/boutique?brand=Apple", isSpecial: true },
     { name: "Téléphones", icon: <Smartphone className="h-4 w-4" />, path: "/boutique?category=smartphones" },
     { name: "Tablettes", icon: <Tablet className="h-4 w-4" />, path: "/boutique?category=tablets", hasSub: true },
@@ -37,7 +45,7 @@ const CategorySidebar = () => {
     return (
         <aside className="hidden lg:block w-72 bg-white border border-t-0 border-gray-100 rounded-b-xl shadow-xl overflow-hidden">
             <nav className="flex flex-col">
-                {categories.map((cat: any, index) => (
+                {categories.map((cat, index) => (
                     <Link
                         key={index}
                         to={cat.path}
